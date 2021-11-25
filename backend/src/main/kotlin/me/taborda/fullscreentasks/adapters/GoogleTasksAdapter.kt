@@ -1,4 +1,4 @@
-package me.taborda.fullscreentasks.adapters.google
+package me.taborda.fullscreentasks.adapters
 
 import com.google.api.client.auth.oauth2.Credential
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp
@@ -25,9 +25,9 @@ import java.time.format.DateTimeFormatter
 import com.google.api.services.tasks.model.Task as GoogleTask
 
 @Component
-class GoogleTasksAdapter: GoogleTasks {
+class GoogleTasksAdapter : GoogleTasks {
 
-    private val scopes = listOf(TasksScopes.TASKS)
+    private val scopes = listOf(TasksScopes.TASKS, TasksScopes.TASKS_READONLY)
     private val credentialsFilePath = "/credentials.json"
     private val tokensDirectoryPath = "tokens"
     private val applicationName = "Fullscreen Tasks"
@@ -69,6 +69,13 @@ class GoogleTasksAdapter: GoogleTasks {
             .map {
                 it.toTask(groupedTasks[it.id].orEmpty().map { subtask -> subtask.toTask() })
             }
+    }
+
+    override fun addTask(taskList: String, title: String): Task {
+        return service.tasks()
+            .insert(taskList, GoogleTask().setTitle(title))
+            .execute()
+            .toTask()
     }
 
     private fun String?.toInstant(): Instant? {

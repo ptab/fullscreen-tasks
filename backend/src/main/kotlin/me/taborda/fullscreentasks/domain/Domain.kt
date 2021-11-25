@@ -10,4 +10,8 @@ class DomainService(private val googleTasks: GoogleTasks) : Domain {
     override fun getTaskLists(): List<TaskList> {
         return googleTasks.getTaskLists()
     }
+
+    override fun addTask(taskList: String, title: String): Task {
+        return googleTasks.addTask(taskList, title)
+    }
 }

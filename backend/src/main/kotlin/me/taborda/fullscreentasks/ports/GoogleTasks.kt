@@ -9,4 +9,6 @@ interface GoogleTasks {
 
     fun getTasks(taskList: String): List<Task>
 
+    fun addTask(taskList: String, title: String): Task
+
 }
