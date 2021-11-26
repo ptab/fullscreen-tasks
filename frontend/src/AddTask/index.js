@@ -1,5 +1,6 @@
 import React from "react"
 import {Input, Form, InputGroup} from "reactstrap"
+import "../style.css"
 
 export default class AddTask extends React.Component {
 
@@ -21,29 +22,32 @@ export default class AddTask extends React.Component {
     handleSubmit(event, handleTaskAdded) {
         event.preventDefault()
         const title = this.state.title
-        this.setState({title: ""})
-        handleTaskAdded(title)
+        if (title !== "") {
+            this.setState({title: ""})
+            handleTaskAdded(title)
+
+        }
     }
 
     render() {
         const {onTaskAdded} = this.props
         const {title, hovering} = this.state
 
-        let classes = "d-flex align-items-center me-2"
-        if (hovering)
-            classes += " bi bi-plus-circle-fill text-primary"
+        let button = "hand d-flex align-items-center me-2 text-primary"
+        if (hovering && title !== "")
+            button += " bi bi-plus-circle-fill"
         else
-            classes += " bi bi-plus text-primary"
+            button += " bi bi-plus"
 
         return (
             <Form onSubmit={e => this.handleSubmit(e, onTaskAdded)}>
                 <InputGroup className="m-1 px-3 py-0">
-                    <i className={classes}
+                    <i className={button}
                        onMouseEnter={_ => this.setState({hovering: true})}
                        onMouseLeave={_ => this.setState({hovering: false})}
                        onClick={e => this.handleSubmit(e, onTaskAdded)}/>
                     <Input type="text"
-                           className="border-0"
+                           className="hand border-0 shadow-none"
                            placeholder="Add a task"
                            value={title}
                            onChange={this.handleChange}/>

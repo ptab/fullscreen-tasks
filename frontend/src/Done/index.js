@@ -16,15 +16,13 @@ export default class Done extends React.Component {
         const {task, onTaskChanged, onTaskDeleted} = this.props
         const {hovering} = this.state
 
-        let classes = "border-0 m-1 px-3 py-0"
         let button
         if (hovering) {
-            classes += " shadow-sm"
             button = <DeleteTask task={task} onTaskDeleted={onTaskDeleted}/>
         }
 
         return (
-            <ListGroupItem className={classes}
+            <ListGroupItem className="border-0 mx-1 px-3 py-0"
                            onMouseEnter={_ => this.setState({hovering: true})}
                            onMouseLeave={_ => this.setState({hovering: false})}>
                 <InputGroup>
@@ -34,7 +32,7 @@ export default class Done extends React.Component {
                     <Input type="text"
                            disabled
                            readOnly
-                           className="border-0 bg-body text-decoration-line-through"
+                           className="border-0 bg-body text-decoration-line-through text-secondary"
                            value={task.title}/>
                     {button}
                 </InputGroup>

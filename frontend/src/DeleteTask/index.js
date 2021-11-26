@@ -14,7 +14,7 @@ export default class DeleteTask extends React.Component {
 
     render() {
         const {task, onTaskDeleted} = this.props
-        return <i className="d-flex align-items-center bi bi-trash-fill"
+        return <i className="hand d-flex align-items-center bi bi-trash-fill"
                   onClick={e => this.handleClick(e, task, onTaskDeleted)}/>
     }
 }

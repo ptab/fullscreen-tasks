@@ -7,19 +7,13 @@ export default class EditTask extends React.Component {
         this.state = {
             editing: false
         }
-
-        this.handleClick = this.handleClick.bind(this)
-    }
-
-    handleClick() {
-        this.setState({editing: true})
     }
 
     render() {
         const {task, onTaskChanged} = this.props
         const {editing} = this.state
 
-        return <i className="d-flex align-items-center bi bi-pencil-fill"
-                  onClick={this.handleClick}/>
+        return <i className="hand d-flex align-items-center bi bi-pencil-fill"
+                  onClick={_ => this.setState({editing: true})}/>
     }
 }

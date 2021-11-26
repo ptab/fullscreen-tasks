@@ -17,7 +17,7 @@ import java.io.IOException
 import java.io.InputStreamReader
 
 @Component
-class GoogleTasksClient(
+class GoogleClient(
     private val jsonFactory: GsonFactory,
     private val httpTransport: NetHttpTransport
 ) {

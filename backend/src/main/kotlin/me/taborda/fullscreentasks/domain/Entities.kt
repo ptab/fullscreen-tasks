@@ -15,11 +15,14 @@ data class Tasks(
 data class Task(
     val id: String,
     val title: String,
-    val done: Boolean,
+    val position: String,
+    val doneAt: Instant?,
     val description: String?,
     val dueBy: Instant?,
     val subtasks: List<Task>
-)
+) {
+    val done = doneAt != null
+}
 
 data class TaskListRequest(
     val title: String?,

@@ -11,7 +11,7 @@ import java.time.format.DateTimeFormatter
 import com.google.api.services.tasks.model.Task as GTask
 
 @Component
-class TasksClient(client: GoogleTasksClient) {
+class TasksClient(client: GoogleClient) {
 
     companion object {
         private val logger = LoggerFactory.getLogger(GoogleTasksPort::class.java)
@@ -20,6 +20,16 @@ class TasksClient(client: GoogleTasksClient) {
     private val service = client.init()
 
     fun get(taskList: String): Tasks {
+        fun withSubtasks(tasks: List<GTask>): List<Task> {
+            val tasksOfParent = tasks.groupBy { it.parent }
+            return tasksOfParent[null]
+                .orEmpty()
+                .map {
+                    val subtasks = tasksOfParent[it.id].orEmpty().map { it.toTask() }
+                    it.toTask(subtasks)
+                }
+        }
+
         val allTasks =
             service.tasks()
                 .list(taskList)
@@ -29,25 +39,11 @@ class TasksClient(client: GoogleTasksClient) {
                 .items
                 .orEmpty()
                 .filterNotNull()
-
         val (todoTasks, doneTasks) = allTasks.partition { it.completed == null }
-        val groupedTasks = todoTasks.groupBy { it.parent }
-        val todo = groupedTasks[null]
-            .orEmpty()
-            .sortedBy { it.position }
-            .map {
-                val subtasks = groupedTasks[it.id]
-                    .orEmpty()
-                    .sortedBy { it.position }
-                    .map { it.toTask() }
-                it.toTask(subtasks)
-            }
-
         return Tasks(
-            todo = todo,
-            done = doneTasks.map { it.toTask() }
+            todo = withSubtasks(todoTasks).sortedBy { it.position },
+            done = withSubtasks(doneTasks).sortedByDescending { it.doneAt }
         )
-
     }
 
     fun add(taskList: String, request: TaskRequest): Task {
@@ -70,9 +66,6 @@ class TasksClient(client: GoogleTasksClient) {
             .execute()
     }
 
-    private fun String?.toInstant(): Instant? {
-        return this?.let { DateTimeFormatter.ISO_OFFSET_DATE_TIME.parse(it, Instant::from) }
-    }
 
     private fun GTask.toTask(): Task {
         return toTask(emptyList())
@@ -82,11 +75,16 @@ class TasksClient(client: GoogleTasksClient) {
         return Task(
             id = id,
             title = title,
-            done = status == "completed",
+            position = position.orEmpty(),
             description = notes,
+            doneAt = completed.toInstant(),
             dueBy = due.toInstant(),
             subtasks = subtasks
         )
+    }
+
+    private fun String?.toInstant(): Instant? {
+        return this?.let { DateTimeFormatter.ISO_OFFSET_DATE_TIME.parse(it, Instant::from) }
     }
 
     private fun TaskRequest.toGTask(): GTask {

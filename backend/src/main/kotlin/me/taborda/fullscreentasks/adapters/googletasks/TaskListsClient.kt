@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component
 import com.google.api.services.tasks.model.TaskList as GTaskList
 
 @Component
-class TaskListsClient(client: GoogleTasksClient) {
+class TaskListsClient(client: GoogleClient) {
 
     companion object {
         private val logger = LoggerFactory.getLogger(GoogleTasksPort::class.java)

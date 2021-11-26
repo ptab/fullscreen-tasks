@@ -55,7 +55,7 @@ export default class TaskList extends React.Component {
             )
     }
 
-    handleTaskDeleted(taskId, data) {
+    handleTaskDeleted(taskId) {
         fetch(`/api/lists/${this.state.id}/tasks/${taskId}`, {
             method: "DELETE"
         })
@@ -85,7 +85,7 @@ export default class TaskList extends React.Component {
                                 <Todo key={task.id} task={task} onTaskChanged={this.handleTaskChanged}/>
                             )
                         }
-                        <CompletedTasks taskList={taskList.id} tasks={done} onTaskChanged={this.handleTaskChanged} onTaskDeleted={this.handleTaskDeleted}/>
+                        <CompletedTasks tasks={done} onTaskChanged={this.handleTaskChanged} onTaskDeleted={this.handleTaskDeleted}/>
                     </ListGroup>
                 </CardBody>
             </Card>

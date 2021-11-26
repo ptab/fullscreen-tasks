@@ -1,7 +1,8 @@
+import React from "react";
 import {ListGroupItem, Badge, Form, InputGroup, Input} from "reactstrap"
 import EditTask from "../EditTask";
 import Checkbox from "../Checkbox";
-import React from "react";
+import "../style.css"
 
 export default class Todo extends React.Component {
 
@@ -32,24 +33,26 @@ export default class Todo extends React.Component {
     render() {
         const {task, margin, onTaskChanged} = this.props
         const {hovering} = this.state
-        let classes = `border-0 m-1 px-3 py-0 ${margin}`
+
+        let inputClasses = "hand border-0 shadow-none"
         let button
         if (hovering) {
-            classes += " shadow-sm"
+            inputClasses += " text-primary"
             button = <EditTask onTaskChanged={onTaskChanged}/>
         }
 
         return (
             <div>
-                <ListGroupItem className={classes}
+                <ListGroupItem className={`border-0 mx-1 px-3 py-0 ${margin}`}
                                onMouseEnter={_ => this.setState({hovering: true})}
                                onMouseLeave={_ => this.setState({hovering: false})}>
                     <Form onSubmit={e => this.handleSubmit(e, onTaskChanged)}>
                         <InputGroup>
                             <Checkbox taskId={task.id}
+                                      inputHovering={hovering}
                                       onTaskChanged={onTaskChanged}/>
                             <Input type="text"
-                                   className="border-0 p"
+                                   className={inputClasses}
                                    defaultValue={task.title}
                                    onChange={this.handleChange}
                                    onBlur={e => this.handleSubmit(e, onTaskChanged)}/>
