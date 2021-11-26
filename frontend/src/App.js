@@ -1,12 +1,8 @@
 import React from "react"
-import {Container, Row} from 'reactstrap'
+import {Container, Row, Spinner} from 'reactstrap'
 import TaskList from "./TaskList"
-import Login from "./Login"
-import Logout from "./Logout"
-import './App.css'
-import 'bootstrap/dist/css/bootstrap.min.css';
 
-class App extends React.Component {
+export default class App extends React.Component {
 
     constructor(props) {
         super(props)
@@ -15,7 +11,6 @@ class App extends React.Component {
         }
 
         this.fetchAllLists = this.fetchAllLists.bind(this);
-        this.handleAddTask = this.handleAddTask.bind(this);
     }
 
     fetchAllLists() {
@@ -31,41 +26,24 @@ class App extends React.Component {
         this.fetchAllLists()
     }
 
-    handleAddTask(taskList, title) {
-        console.log(`/api/lists/${taskList}`)
-        fetch(`/api/lists/${taskList}`, {
-            method: "POST",
-            body: JSON.stringify(title),
-            headers: {"Content-Type": "application/json"}
-        })
-            .then(res => res.json())
-            .then(
-                (result) => {
-                    console.log(result)
-                    this.fetchAllLists()
-                },
-                (error) => console.error(error)
-            )
-    }
-
-
     render() {
         const {lists} = this.state
 
         if (lists.length > 0)
             return <Container>
-                <Row className="m-3">
-                    {
-                        lists.map(taskList => <TaskList key={taskList.id} taskList={taskList} onTaskAdded={this.handleAddTask}/>)
-                    }
-                </Row>
+                {
+                    lists.map(taskList =>
+                        <Row key={taskList.id} className="m-3">
+                            <TaskList taskList={taskList} onTaskAdded={this.handleAddTask}/>
+                        </Row>
+                    )
+                }
             </Container>
         else
-            return <div>
-                <Login/>
-                <Logout/>
-            </div>
+            return <Container>
+                <Row>
+                    <Spinner/>
+                </Row>
+            </Container>
     }
 }
-
-export default App

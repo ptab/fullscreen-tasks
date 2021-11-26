@@ -2,7 +2,7 @@ import GoogleLogin from "react-google-login"
 
 const clientId = "1089937175689-q0rm1qrn5jh1nef1hat56128n0k2fkqp.apps.googleusercontent.com"
 
-function Login() {
+export default function Login() {
 
     const onSuccess = (res) => {
         console.log('Login Success: currentUser:', res.profileObj)
@@ -34,5 +34,3 @@ function Login() {
         isSignedIn={true}
     />
 }
-
-export default Login;
