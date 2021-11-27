@@ -1,5 +1,5 @@
 import React from "react"
-import "../style.css"
+import "../../style.css"
 
 export default class Checkbox extends React.Component {
 
@@ -9,17 +9,16 @@ export default class Checkbox extends React.Component {
             checked: props.checked || false,
             hovering: false
         }
-
         this.handleClick = this.handleClick.bind(this)
     }
 
-    handleClick(event, taskId, onTaskChanged) {
+    handleClick(event, taskId, onTaskChecked) {
         this.setState({checked: !this.state.checked})
-        onTaskChanged(taskId, {done: !this.state.checked})
+        onTaskChecked(taskId, !this.state.checked)
     }
 
     render() {
-        const {taskId, onTaskChanged, inputHovering} = this.props
+        const {taskId, onTaskChecked, parentHovering} = this.props
         const {checked, hovering} = this.state
 
         let checkbox = "hand d-flex align-items-center me-2"
@@ -30,7 +29,7 @@ export default class Checkbox extends React.Component {
                 checkbox += " bi bi-check2-circle text-primary"
         else if (hovering)
             checkbox += " bi bi-check-lg text-primary"
-        else if (inputHovering)
+        else if (parentHovering)
             checkbox += " bi bi-circle text-primary"
         else
             checkbox += " bi bi-circle text-secondary"
@@ -38,6 +37,6 @@ export default class Checkbox extends React.Component {
         return <i className={checkbox}
                   onMouseEnter={_ => this.setState({hovering: true})}
                   onMouseLeave={_ => this.setState({hovering: false})}
-                  onClick={e => this.handleClick(e, taskId, onTaskChanged)}/>
+                  onClick={e => this.handleClick(e, taskId, onTaskChecked)}/>
     }
 }

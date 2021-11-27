@@ -1,6 +1,6 @@
 import React from "react"
 import {Container, Row, Spinner} from 'reactstrap'
-import TaskList from "./TaskList"
+import TaskList from "./components/TaskList"
 
 export default class App extends React.Component {
 
@@ -30,20 +30,24 @@ export default class App extends React.Component {
         const {lists} = this.state
 
         if (lists.length > 0)
-            return <Container>
-                {
-                    lists.map(taskList =>
-                        <Row key={taskList.id} className="m-3">
-                            <TaskList taskList={taskList} onTaskAdded={this.handleAddTask}/>
-                        </Row>
-                    )
-                }
-            </Container>
+            return (
+                <Container>
+                    {
+                        lists.map(taskList =>
+                            <Row key={taskList.id}>
+                                <TaskList taskList={taskList}/>
+                            </Row>
+                        )
+                    }
+                </Container>
+            )
         else
-            return <Container>
-                <Row>
-                    <Spinner/>
-                </Row>
-            </Container>
+            return (
+                <Container>
+                    <Row>
+                        <Spinner className="text-primary"/>
+                    </Row>
+                </Container>
+            )
     }
 }

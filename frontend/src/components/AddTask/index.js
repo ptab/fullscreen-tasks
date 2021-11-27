@@ -1,6 +1,8 @@
 import React from "react"
 import {Input, Form, InputGroup} from "reactstrap"
-import "../style.css"
+import "../../style.css"
+
+const placeholder = "Add a task"
 
 export default class AddTask extends React.Component {
 
@@ -8,30 +10,25 @@ export default class AddTask extends React.Component {
         super(props)
         this.state = {
             title: "",
-            hovering: false
+            hovering: false,
+            placeholder: placeholder
         }
 
-        this.handleChange = this.handleChange.bind(this)
         this.handleSubmit = this.handleSubmit.bind(this)
-    }
-
-    handleChange(event) {
-        this.setState({title: event.target.value})
     }
 
     handleSubmit(event, handleTaskAdded) {
         event.preventDefault()
         const title = this.state.title
         if (title !== "") {
-            this.setState({title: ""})
+            this.setState({title: "", placeholder: placeholder})
             handleTaskAdded(title)
-
         }
     }
 
     render() {
         const {onTaskAdded} = this.props
-        const {title, hovering} = this.state
+        const {title, hovering, placeholder} = this.state
 
         let button = "hand d-flex align-items-center me-2 text-primary"
         if (hovering && title !== "")
@@ -41,16 +38,18 @@ export default class AddTask extends React.Component {
 
         return (
             <Form onSubmit={e => this.handleSubmit(e, onTaskAdded)}>
-                <InputGroup className="m-1 px-3 py-0">
+                <InputGroup>
                     <i className={button}
                        onMouseEnter={_ => this.setState({hovering: true})}
                        onMouseLeave={_ => this.setState({hovering: false})}
                        onClick={e => this.handleSubmit(e, onTaskAdded)}/>
                     <Input type="text"
                            className="hand border-0 shadow-none"
-                           placeholder="Add a task"
+                           placeholder={placeholder}
                            value={title}
-                           onChange={this.handleChange}/>
+                           onFocus={_ => this.setState({placeholder: ""})}
+                           onChange={e => this.setState({title: e.target.value})}
+                           onBlur={e => this.handleSubmit(e, onTaskAdded)}/>
                 </InputGroup>
             </Form>
         )

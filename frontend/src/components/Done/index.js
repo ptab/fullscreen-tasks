@@ -13,7 +13,7 @@ export default class Done extends React.Component {
     }
 
     render() {
-        const {task, onTaskChanged, onTaskDeleted} = this.props
+        const {task, onTaskChecked, onTaskDeleted} = this.props
         const {hovering} = this.state
 
         let button
@@ -22,18 +22,16 @@ export default class Done extends React.Component {
         }
 
         return (
-            <ListGroupItem className="border-0 mx-1 px-3 py-0"
-                           onMouseEnter={_ => this.setState({hovering: true})}
-                           onMouseLeave={_ => this.setState({hovering: false})}>
-                <InputGroup>
+            <ListGroupItem className="border-0 p-0">
+                <InputGroup onMouseEnter={_ => this.setState({hovering: true})}
+                            onMouseLeave={_ => this.setState({hovering: false})}>
                     <Checkbox taskId={task.id}
                               checked
-                              onTaskChanged={onTaskChanged}/>
+                              onTaskChecked={onTaskChecked}/>
                     <Input type="text"
                            disabled
-                           readOnly
                            className="border-0 bg-body text-decoration-line-through text-secondary"
-                           value={task.title}/>
+                           defaultValue={task.title}/>
                     {button}
                 </InputGroup>
             </ListGroupItem>
