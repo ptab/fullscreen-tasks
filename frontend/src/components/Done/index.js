@@ -25,7 +25,7 @@ export default class Done extends React.Component {
                     <InputGroupCheckbox task={task} checked hovering onTaskChecked={onTaskChecked}/>
                     <Input type="text"
                            disabled
-                           className="border-0 bg-body text-decoration-line-through text-secondary"
+                           className="border-0 bg-body text-decoration-line-through text-muted"
                            defaultValue={task.title}/>
                     <InputGroupDeleteTask visible={hovering} task={task} onTaskDeleted={onTaskDeleted}/>
                 </InputGroup>

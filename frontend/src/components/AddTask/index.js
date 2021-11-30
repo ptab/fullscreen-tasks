@@ -2,8 +2,6 @@ import React from "react"
 import {Input, Form, InputGroup, InputGroupText} from "reactstrap"
 import InputGroupIndicator from "../InputGroupIndicator";
 
-const placeholder = "Add a task"
-
 export default class AddTask extends React.Component {
 
     constructor(props) {
@@ -12,7 +10,6 @@ export default class AddTask extends React.Component {
             title: "",
             hovering: false,
             editing: false,
-            placeholder: placeholder
         }
 
         this.handleSubmit = this.handleSubmit.bind(this)
@@ -21,7 +18,7 @@ export default class AddTask extends React.Component {
     handleSubmit(event, handleTaskAdded) {
         event.preventDefault()
         const title = this.state.title
-        this.setState({title: "", placeholder: placeholder, editing: false})
+        this.setState({title: "", editing: false})
         if (title !== "") {
             handleTaskAdded(title)
         }
@@ -29,38 +26,41 @@ export default class AddTask extends React.Component {
 
     render() {
         const {onTaskAdded} = this.props
-        const {title, hovering, editing, placeholder} = this.state
+        const {title, hovering, editing} = this.state
 
-        let input = "border-0 shadow-none"
-        let button = "cursor-hand text-primary"
+        let cursor
+        let textcolor
+        let button
         if (editing) {
-            input += " cursor-text"
-            button += " bi bi-plus-circle-fill"
+            cursor = "cursor-text"
+            button = "bi bi-plus-circle-fill"
         } else if (hovering) {
-            input += " cursor-hand text-primary"
-            button += " bi bi-plus"
+            cursor = "cursor-hand"
+            textcolor = "text-primary"
+            button = "bi bi-plus"
         } else {
-            input += " cursor-hand"
-            button += " bi bi-plus"
+            cursor = "cursor-hand"
+            button = "bi bi-plus"
         }
 
         return (
-            <Form onSubmit={e => this.handleSubmit(e, onTaskAdded)}>
+            <Form className="my-2"
+                  onSubmit={e => this.handleSubmit(e, onTaskAdded)}
+                  onBlur={e => this.handleSubmit(e, onTaskAdded)}>
                 <InputGroup>
-                    <InputGroupIndicator invisible />
-                    <InputGroupText className="border-0 bg-body px-1">
-                        <i className={button}
+                    <InputGroupIndicator/>
+                    <InputGroupText className="border-0 bg-body py-0">
+                        <i className={`cursor-hand ${button} text-primary`}
                            onMouseEnter={_ => this.setState({hovering: true})}
                            onMouseLeave={_ => this.setState({hovering: false})}
                            onClick={e => this.handleSubmit(e, onTaskAdded)}/>
                     </InputGroupText>
                     <Input type="text"
-                           className={input}
-                           placeholder={placeholder}
-                           defaultValue={title}
+                           className={`${cursor} border-0 shadow-none ${textcolor}`}
+                           placeholder="Add a task"
+                           value={title}
                            onFocus={_ => this.setState({placeholder: "", editing: true})}
-                           onChange={e => this.setState({title: e.target.value})}
-                           onBlur={e => this.handleSubmit(e, onTaskAdded)}/>
+                           onChange={e => this.setState({title: e.target.value})}/>
                 </InputGroup>
             </Form>
         )

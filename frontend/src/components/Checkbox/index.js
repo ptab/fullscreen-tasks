@@ -23,7 +23,7 @@ export default class Checkbox extends React.Component {
         let checkbox = "cursor-hand"
         if (checked)
             if (hovering)
-                checkbox += " bi bi-circle text-secondary"
+                checkbox += " bi bi-circle text-muted"
             else
                 checkbox += " bi bi-check2-circle text-primary"
         else if (hovering)
@@ -31,7 +31,7 @@ export default class Checkbox extends React.Component {
         else if (parentHovering)
             checkbox += " bi bi-circle text-primary"
         else
-            checkbox += " bi bi-circle text-secondary"
+            checkbox += " bi bi-circle text-muted"
 
         return <i className={checkbox}
                   onMouseEnter={_ => this.setState({hovering: true})}

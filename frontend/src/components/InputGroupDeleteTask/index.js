@@ -19,7 +19,7 @@ export default class InputGroupDeleteTask extends React.Component {
             if (hovering)
                 icon += " text-danger"
             else
-                icon += " text-secondary"
+                icon += " text-muted"
 
             return (
                 <InputGroupText className="border-0 bg-body">

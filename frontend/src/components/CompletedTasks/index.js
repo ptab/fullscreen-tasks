@@ -29,7 +29,7 @@ export default class CompletedTasks extends React.Component {
             chevron = <i className="bi bi-chevron-compact-down me-3"/>
 
         return (
-            <div className="text-secondary cursor-hand">
+            <div className="text-muted cursor-hand">
                  <span className="list-title" onClick={_ => this.setState({open: !open})}>
                      {chevron}
                      Completed ({done.length})

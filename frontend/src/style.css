@@ -1,10 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans&family=Open+Sans+Condensed&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Mulish&family=Open+Sans+Condensed&display=swap');
 
 html, body {
-    height: 100%;
-}
-
-#root {
     font-family: 'Open Sans Condensed', sans-serif;
     background-color: whitesmoke;
     height: 100%;

@@ -1,9 +1,7 @@
 import React from "react"
-import {ListGroupItem, Form, InputGroup, Input} from "reactstrap"
+import {ListGroupItem, Form, InputGroup, Input, Collapse, InputGroupText, Button} from "reactstrap"
 import InputGroupIndicator from "../InputGroupIndicator"
 import InputGroupCheckbox from "../InputGroupCheckbox"
-import InputGroupEditTask from "../InputGroupEditTask"
-import "./style.css"
 
 export default class Todo extends React.Component {
 
@@ -11,64 +9,97 @@ export default class Todo extends React.Component {
         super(props)
         this.state = {
             title: props.task.title,
+            details: props.task.details,
+            dueBy: props.task.dueBy,
             hovering: false,
             editing: false
         }
 
+        this.onChange = this.onChange.bind(this)
         this.handleSubmit = this.handleSubmit.bind(this)
+        this.resetForm = this.resetForm.bind(this)
+    }
+
+    onChange(event) {
+        this.setState({[event.target.name]: event.target.value})
     }
 
     handleSubmit(event, task, handleTaskEdited) {
         event.preventDefault()
-        const {title, editing} = this.state
+        const {title, details, dueBy, editing} = this.state
         if (editing) {
             this.setState({editing: false})
-            if (title !== task.title)
-                handleTaskEdited(task.id, {title: title})
+            if (title !== task.title ||
+                details !== task.details ||
+                dueBy !== task.dueBy)
+                handleTaskEdited(task.id, {title: title, details: details, dueBy: dueBy})
         }
     }
 
-    // FIXME forced to use this because I can't get the Input component to re-render when props.task.title changes
-    componentDidUpdate(previous) {
-        const {task} = this.props
-        if (task.title !== previous.task.title) {
-            console.log("title changed, will update!")
-            this.setState({title: task.title})
-        }
+    resetForm(task) {
+        this.setState({title: task.title, details: task.details || "", dueBy: "" || undefined, editing: false})
     }
 
     render() {
         const {task, margin, onTaskChecked, onTaskEdited, onTaskDeleted} = this.props
-        const {title, hovering, editing} = this.state
+        const {title, details, dueBy, hovering, editing} = this.state
 
-        let input = "border-0 shadow-none"
-        if (editing)
-            input += " cursor-text"
-        else if (hovering)
-            input += " cursor-hand"
+        let cursor
+        let bgcolor = "bg-body"
+        if (editing) {
+            cursor = "cursor-text"
+            bgcolor = "bg-light"
+        } else if (hovering) {
+            cursor = "cursor-hand"
+        }
 
         return (
             <div>
-                <ListGroupItem className={`border-0 p-0 ${margin}`}>
+                <ListGroupItem className={`border-0 pt-0 px-0 ${margin}`}
+                               onMouseEnter={_ => this.setState({hovering: true})}
+                               onMouseLeave={_ => this.setState({hovering: false})}>
                     <Form onSubmit={e => this.handleSubmit(e, task, onTaskEdited)}>
-                        <InputGroup onMouseEnter={_ => this.setState({hovering: true})}
-                                    onMouseLeave={_ => this.setState({hovering: false})}>
+                        <InputGroup>
                             <InputGroupIndicator visible={hovering || editing}/>
                             <InputGroupCheckbox task={task} hovering={hovering} onTaskChecked={onTaskChecked}/>
                             <Input type="text"
-                                   className={input}
+                                   name="title"
+                                   className={`${cursor} border-0 ${bgcolor} shadow-none rounded-3`}
                                    value={title}
                                    onFocus={_ => this.setState({editing: true})}
-                                   onChange={e => this.setState({title: e.target.value})}
-                                   onBlur={e => this.handleSubmit(e, task, onTaskEdited)}/>
-                            <InputGroupEditTask visible={hovering || editing}
-                                                parentEditing={editing}
-                                                task={task}
-                                                onTaskEdited={onTaskEdited}
-                                                onTaskDeleted={onTaskDeleted}/>
+                                   onChange={this.onChange}/>
                         </InputGroup>
+                        <Collapse isOpen={editing}>
+                            <Description value={details} editable onChange={this.onChange}/>
+                            <DueBy value={dueBy} editable onChange={this.onChange}/>
+                            <div className="mt-2">
+                                <Button outline
+                                        color="primary"
+                                        className="btn btn-sm ms-4 me-2"
+                                        onClick={e => this.handleSubmit(e, task, onTaskEdited)}>
+                                    <i className="bi bi-save py-0 me-2"/>
+                                    Save
+                                </Button>
+                                <Button outline
+                                        className="btn btn-sm me-2"
+                                        onClick={_ => this.resetForm(task)}>
+                                    <i className="bi bi-x-lg py-0 me-2"/>
+                                    Close
+                                </Button>
+                                <Button outline
+                                        color="danger"
+                                        className="btn btn-sm"
+                                        onClick={_ => onTaskDeleted(task)}>
+                                    <i className="bi bi-trash py-0 me-2"/>
+                                    Delete
+                                </Button>
+                            </div>
+                        </Collapse>
+                        <Collapse isOpen={!editing}>
+                            <Description value={details} onClick={_ => this.setState({editing: true})}/>
+                            <DueBy value={dueBy} onClick={_ => this.setState({editing: true})}/>
+                        </Collapse>
                     </Form>
-                    <Details task={task} />
 
                 </ListGroupItem>
                 {
@@ -87,54 +118,91 @@ export default class Todo extends React.Component {
 
 function Subtask(props) {
     const {task, onTaskChecked, onTaskEdited, onTaskDeleted} = props
-    return <Todo
-        margin="ms-4"
-        task={task}
-        onTaskChecked={onTaskChecked}
-        onTaskEdited={onTaskEdited}
-        onTaskDeleted={onTaskDeleted}/>
-}
-
-function Details(props) {
-    if (props.task.details || props.task.dueBy)
-        return (
-            <div className="ms-5 ps-3 mb-3">
-                <Description text={props.task.details}/>
-                <DueBy text={props.task.dueBy}/>
-            </div>
-        )
-    else
-        return null
+    return <Todo margin="ms-5"
+                 task={task}
+                 onTaskChecked={onTaskChecked}
+                 onTaskEdited={onTaskEdited}
+                 onTaskDeleted={onTaskDeleted}/>
 }
 
 function Description(props) {
-    if (props.text)
-        return (
-            <div className="task-details text-secondary">
-                <i className="d-inline-flex align-middle bi bi-card-text me-2"/>
-                <span className="d-inline-flex align-middle ">{props.text}</span>
-            </div>
-        )
-    else
+    const {editable, value, onClick, onChange} = props
+
+    if (!editable && !value)
         return null
+
+    let margin
+    let component
+    if (editable) {
+        margin = "mt-1"
+        component = <Input type="textarea"
+                           name="details"
+                           placeholder="Add details"
+                           value={value}
+                           className="border-0 bg-light shadow-none rounded-3"
+                           style={{fontSize: 0.80 + "rem"}}
+                           rows="1"
+                           onChange={onChange}/>
+    } else if (value) {
+        component = <Input type="text"
+                           disabled
+                           value={value}
+                           className="border-0 bg-body py-0 text-muted"
+                           style={{fontSize: 0.80 + "rem"}}
+                           onClick={onClick}/>
+    }
+
+    return (
+        <InputGroup className={margin}>
+            <InputGroupIndicator/>
+            <InputGroupText className="border-0 bg-body py-0">
+                <i className="bi bi-card-text text-muted"/>
+            </InputGroupText>
+            {component}
+        </InputGroup>
+    )
 }
 
 function DueBy(props) {
-    const dueBy = new Date(props.text)
-
-    let classname = "task-details border border-1 px-1 rounded d-inline-flex align-middle"
-    if (dueBy <= Date.now())
-        classname += " text-danger border-danger"
-    else
-        classname += " text-secondary border-secondary"
-
-    if (props.text)
-        return (
-            <span className={classname}>
-                <i className="bi bi-calendar-event me-2"/>
-                {dueBy.toLocaleString()}
-            </span>
-        )
-    else
+    const {editable, value, onClick, onChange} = props
+    if (!editable && !value)
         return null
+
+    const dueBy = new Date(value)
+
+    let color
+
+    if (!editable && dueBy <= Date.now())
+        color = "text-warning"
+    else
+        color = "text-muted"
+
+    let margin
+    let component
+    if (editable) {
+        margin = "mt-1"
+        component = <Input type="date"
+                           name="dueBy"
+                           placeholder="Add due date"
+                           value={dueBy}
+                           className="border-0 bg-light shadow-none rounded-3"
+                           style={{fontSize: 0.80 + "rem"}}
+                           onChange={onChange}/>
+    } else
+        component = <Input type="text"
+                           disabled
+                           value={dueBy.toLocaleString()}
+                           className={`border-0 bg-body ${color}`}
+                           style={{fontSize: 0.80 + "rem"}}
+                           onClick={onClick}/>
+
+    return (
+        <InputGroup className={margin}>
+            <InputGroupIndicator/>
+            <InputGroupText className="border-0 bg-body py-0">
+                <i className={`bi bi-calendar-event py-0 ${color}`}/>
+            </InputGroupText>
+            {component}
+        </InputGroup>
+    )
 }
