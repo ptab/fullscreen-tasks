@@ -1,7 +1,7 @@
 package me.taborda.fullscreentasks.adapters.googletasks
 
 import me.taborda.fullscreentasks.domain.TaskList
-import me.taborda.fullscreentasks.domain.TaskListRequest
+import me.taborda.fullscreentasks.domain.EditTaskListRequest
 import me.taborda.fullscreentasks.ports.GoogleTasksPort
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
@@ -32,7 +32,7 @@ class TaskListsClient(client: GoogleClient) {
             }
     }
 
-    fun add(request: TaskListRequest): TaskList {
+    fun add(request: EditTaskListRequest): TaskList {
         return service
             .tasklists()
             .insert(request.toGTaskList())
@@ -40,7 +40,7 @@ class TaskListsClient(client: GoogleClient) {
             .toTaskList()
     }
 
-    fun edit(taskList: String, request: TaskListRequest): TaskList {
+    fun edit(taskList: String, request: EditTaskListRequest): TaskList {
         return service
             .tasklists()
             .update(taskList, request.toGTaskList())
@@ -59,7 +59,7 @@ class TaskListsClient(client: GoogleClient) {
         return TaskList(id, title)
     }
 
-    private fun TaskListRequest.toGTaskList(): GTaskList {
+    private fun EditTaskListRequest.toGTaskList(): GTaskList {
         return GTaskList().setTitle(title)
     }
 

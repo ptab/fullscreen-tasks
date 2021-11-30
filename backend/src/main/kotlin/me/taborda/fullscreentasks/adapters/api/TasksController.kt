@@ -1,7 +1,7 @@
 package me.taborda.fullscreentasks.adapters.api
 
 import me.taborda.fullscreentasks.domain.Task
-import me.taborda.fullscreentasks.domain.TaskRequest
+import me.taborda.fullscreentasks.domain.EditTaskRequest
 import me.taborda.fullscreentasks.domain.Tasks
 import me.taborda.fullscreentasks.ports.TasksPort
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -23,12 +23,12 @@ class TasksController(private val tasks: TasksPort) {
     }
 
     @PostMapping
-    fun add(@PathVariable taskList: String, @RequestBody request: TaskRequest): Task {
+    fun add(@PathVariable taskList: String, @RequestBody request: EditTaskRequest): Task {
         return tasks.add(taskList, request)
     }
 
     @PatchMapping("/{task}")
-    fun edit(@PathVariable taskList: String, @PathVariable("task") id: String, @RequestBody request: TaskRequest): Task {
+    fun edit(@PathVariable taskList: String, @PathVariable("task") id: String, @RequestBody request: EditTaskRequest): Task {
         return tasks.edit(taskList, id, request)
     }
 

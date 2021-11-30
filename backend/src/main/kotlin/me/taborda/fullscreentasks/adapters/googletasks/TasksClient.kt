@@ -1,7 +1,7 @@
 package me.taborda.fullscreentasks.adapters.googletasks
 
+import me.taborda.fullscreentasks.domain.EditTaskRequest
 import me.taborda.fullscreentasks.domain.Task
-import me.taborda.fullscreentasks.domain.TaskRequest
 import me.taborda.fullscreentasks.domain.Tasks
 import me.taborda.fullscreentasks.ports.GoogleTasksPort
 import org.slf4j.LoggerFactory
@@ -46,14 +46,14 @@ class TasksClient(client: GoogleClient) {
         )
     }
 
-    fun add(taskList: String, request: TaskRequest): Task {
+    fun add(taskList: String, request: EditTaskRequest): Task {
         return service.tasks()
             .insert(taskList, request.toGTask())
             .execute()
             .toTask()
     }
 
-    fun edit(taskList: String, task: String, request: TaskRequest): Task {
+    fun edit(taskList: String, task: String, request: EditTaskRequest): Task {
         return service.tasks()
             .patch(taskList, task, request.toGTask())
             .execute()
@@ -76,7 +76,7 @@ class TasksClient(client: GoogleClient) {
             id = id,
             title = title,
             position = position.orEmpty(),
-            description = notes,
+            details = notes,
             doneAt = completed.toInstant(),
             dueBy = due.toInstant(),
             subtasks = subtasks
@@ -87,10 +87,12 @@ class TasksClient(client: GoogleClient) {
         return this?.let { DateTimeFormatter.ISO_OFFSET_DATE_TIME.parse(it, Instant::from) }
     }
 
-    private fun TaskRequest.toGTask(): GTask {
+    private fun EditTaskRequest.toGTask(): GTask {
         return GTask()
             .setTitle(title)
             .setStatus(done?.let { if (it) "completed" else "needsAction" })
+            .setNotes(details)
+            .setDue(dueBy?.let { DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(it) })
     }
 
 }

@@ -1,9 +1,9 @@
 package me.taborda.fullscreentasks.adapters.googletasks
 
+import me.taborda.fullscreentasks.domain.EditTaskListRequest
+import me.taborda.fullscreentasks.domain.EditTaskRequest
 import me.taborda.fullscreentasks.domain.Task
 import me.taborda.fullscreentasks.domain.TaskList
-import me.taborda.fullscreentasks.domain.TaskListRequest
-import me.taborda.fullscreentasks.domain.TaskRequest
 import me.taborda.fullscreentasks.domain.Tasks
 import me.taborda.fullscreentasks.ports.GoogleTasksPort
 import org.springframework.stereotype.Component
@@ -18,11 +18,11 @@ class GoogleTasksAdapter(
         return taskListsClient.get()
     }
 
-    override fun addTaskList(request: TaskListRequest): TaskList {
+    override fun addTaskList(request: EditTaskListRequest): TaskList {
         return taskListsClient.add(request)
     }
 
-    override fun editTaskList(taskList: String, request: TaskListRequest): TaskList {
+    override fun editTaskList(taskList: String, request: EditTaskListRequest): TaskList {
         return taskListsClient.edit(taskList, request)
     }
 
@@ -34,11 +34,11 @@ class GoogleTasksAdapter(
         return tasksClient.get(taskList)
     }
 
-    override fun addTask(taskList: String, request: TaskRequest): Task {
+    override fun addTask(taskList: String, request: EditTaskRequest): Task {
         return tasksClient.add(taskList, request)
     }
 
-    override fun editTask(taskList: String, task: String, request: TaskRequest): Task {
+    override fun editTask(taskList: String, task: String, request: EditTaskRequest): Task {
         return tasksClient.edit(taskList, task, request)
     }
 

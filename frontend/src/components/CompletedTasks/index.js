@@ -6,29 +6,38 @@ export default class CompletedTasks extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {open: false};
+        this.state = JSON.parse(localStorage.getItem(`CompletedTasks.${props.taskList.id}`)) || {
+            open: false,
+            taskList: props.taskList.id
+        }
+    }
+
+    setState(state) {
+        super.setState(state, () => {
+            localStorage.setItem(`CompletedTasks.${this.state.taskList}`, JSON.stringify(this.state));
+        });
     }
 
     render() {
-        const {tasks, onTaskChecked, onTaskDeleted} = this.props
+        const {done, onTaskChecked, onTaskDeleted} = this.props
         const {open} = this.state
 
         let chevron
         if (open)
-            chevron = <i className="me-3 bi bi-chevron-compact-up"/>
+            chevron = <i className="bi bi-chevron-compact-up me-3"/>
         else
-            chevron = <i className="me-3 bi bi-chevron-compact-down"/>
+            chevron = <i className="bi bi-chevron-compact-down me-3"/>
 
         return (
-            <div className="mt-4 text-secondary">
-                <p className="hand mb-2" onClick={_ => this.setState({open: !open})}>
-                    {chevron}
-                    Completed ({tasks.length})
-                </p>
+            <div className="text-secondary cursor-hand">
+                 <span className="list-title" onClick={_ => this.setState({open: !open})}>
+                     {chevron}
+                     Completed ({done.length})
+                 </span>
                 <Collapse isOpen={open}>
-                    <ListGroup className="m-0 p-0">
+                    <ListGroup className="mt-2">
                         {
-                            tasks.map(task =>
+                            done.map(task =>
                                 <Done key={task.id}
                                       task={task}
                                       onTaskChecked={onTaskChecked}

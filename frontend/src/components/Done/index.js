@@ -1,7 +1,8 @@
 import React from "react"
 import {Input, InputGroup, ListGroupItem} from "reactstrap"
-import Checkbox from "../Checkbox"
-import DeleteTask from "../DeleteTask"
+import InputGroupCheckbox from "../InputGroupCheckbox";
+import InputGroupIndicator from "../InputGroupIndicator";
+import InputGroupDeleteTask from "../InputGroupDeleteTask"
 
 export default class Done extends React.Component {
 
@@ -16,23 +17,17 @@ export default class Done extends React.Component {
         const {task, onTaskChecked, onTaskDeleted} = this.props
         const {hovering} = this.state
 
-        let button
-        if (hovering) {
-            button = <DeleteTask task={task} onTaskDeleted={onTaskDeleted}/>
-        }
-
         return (
             <ListGroupItem className="border-0 p-0">
                 <InputGroup onMouseEnter={_ => this.setState({hovering: true})}
                             onMouseLeave={_ => this.setState({hovering: false})}>
-                    <Checkbox taskId={task.id}
-                              checked
-                              onTaskChecked={onTaskChecked}/>
+                    <InputGroupIndicator visible={hovering}/>
+                    <InputGroupCheckbox task={task} checked hovering onTaskChecked={onTaskChecked}/>
                     <Input type="text"
                            disabled
                            className="border-0 bg-body text-decoration-line-through text-secondary"
                            defaultValue={task.title}/>
-                    {button}
+                    <InputGroupDeleteTask visible={hovering} task={task} onTaskDeleted={onTaskDeleted}/>
                 </InputGroup>
             </ListGroupItem>
         )

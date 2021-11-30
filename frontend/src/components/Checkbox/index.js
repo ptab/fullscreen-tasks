@@ -1,5 +1,4 @@
 import React from "react"
-import "../../style.css"
 
 export default class Checkbox extends React.Component {
 
@@ -18,10 +17,10 @@ export default class Checkbox extends React.Component {
     }
 
     render() {
-        const {taskId, onTaskChecked, parentHovering} = this.props
+        const {taskId, parentHovering, onTaskChecked} = this.props
         const {checked, hovering} = this.state
 
-        let checkbox = "hand d-flex align-items-center me-2"
+        let checkbox = "cursor-hand"
         if (checked)
             if (hovering)
                 checkbox += " bi bi-circle text-secondary"

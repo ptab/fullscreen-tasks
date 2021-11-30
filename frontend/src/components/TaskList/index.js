@@ -1,10 +1,11 @@
 import React from "react"
-import {Card, CardHeader, CardBody, ListGroup} from "reactstrap"
+import {Card, CardHeader, CardBody, ListGroup, CardFooter} from "reactstrap"
 import AddTask from "../AddTask"
 import Todo from '../Todo'
 import CompletedTasks from "../CompletedTasks";
 import {add, remove} from "../../utils/arrays"
 import {get, post, patch, del} from "../../utils/client"
+import "./style.css"
 
 export default class TaskList extends React.Component {
 
@@ -69,11 +70,11 @@ export default class TaskList extends React.Component {
         )
     }
 
-    handleTaskDeleted(taskId) {
-        const [, done] = remove(this.state.done, taskId)
+    handleTaskDeleted(task) {
+        const [, done] = remove(this.state.done, task.id)
         this.setState({done: done})
 
-        del(`/api/lists/${this.state.taskList.id}/tasks/${taskId}`,
+        del(`/api/lists/${this.state.taskList.id}/tasks/${task.id}`,
             _ => this.fetchTasks(),
             _ => this.setState({todo: [], done: []})
         )
@@ -84,30 +85,33 @@ export default class TaskList extends React.Component {
     }
 
     render() {
-        const {taskList} = this.props
-        const {todo, done} = this.state
+        const {taskList, todo, done} = this.state
         return (
             <Card className="m-3 p-3 shadow">
-                <CardHeader className="bg-body border-0">
+                <CardHeader className="border-0 bg-body list-title">
                     <i className="bi bi-list-check text-secondary me-3"/>
                     <span className="fs-5">{taskList.title}</span>
                 </CardHeader>
                 <CardBody>
+                    <AddTask taskList={taskList.id} onTaskAdded={this.handleTaskAdded}/>
                     <ListGroup>
-                        <AddTask taskList={taskList.id} onTaskAdded={this.handleTaskAdded}/>
                         {
                             todo.map(task =>
                                 <Todo key={task.id}
                                       task={task}
                                       onTaskChecked={this.handleTaskChecked}
-                                      onTaskEdited={this.handleTaskEdited}/>
+                                      onTaskEdited={this.handleTaskEdited}
+                                      onTaskDeleted={this.handleTaskDeleted}/>
                             )
                         }
-                        <CompletedTasks tasks={done}
-                                        onTaskChecked={this.handleTaskChecked}
-                                        onTaskDeleted={this.handleTaskDeleted}/>
                     </ListGroup>
                 </CardBody>
+                <CardFooter className="border-0 bg-body">
+                    <CompletedTasks taskList={taskList}
+                                    done={done}
+                                    onTaskChecked={this.handleTaskChecked}
+                                    onTaskDeleted={this.handleTaskDeleted}/>
+                </CardFooter>
             </Card>
         )
     }

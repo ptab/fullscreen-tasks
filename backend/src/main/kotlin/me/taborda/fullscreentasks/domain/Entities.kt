@@ -17,18 +17,20 @@ data class Task(
     val title: String,
     val position: String,
     val doneAt: Instant?,
-    val description: String?,
+    val details: String?,
     val dueBy: Instant?,
     val subtasks: List<Task>
 ) {
     val done = doneAt != null
 }
 
-data class TaskListRequest(
+data class EditTaskListRequest(
     val title: String?,
 )
 
-data class TaskRequest(
+data class EditTaskRequest(
     val title: String?,
-    val done: Boolean?
+    val done: Boolean?,
+    val details: String?,
+    val dueBy: Instant?
 )
