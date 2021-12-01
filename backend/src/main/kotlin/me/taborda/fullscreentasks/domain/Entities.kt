@@ -19,6 +19,7 @@ data class Task(
     val doneAt: Instant?,
     val details: String?,
     val dueBy: Instant?,
+    val parent: String?,
     val subtasks: List<Task>
 ) {
     val done = doneAt != null
@@ -28,9 +29,10 @@ data class EditTaskListRequest(
     val title: String?,
 )
 
-data class EditTaskRequest(
+data class TaskRequest(
     val title: String?,
     val done: Boolean?,
     val details: String?,
-    val dueBy: Instant?
+    val dueBy: Instant?,
+    val parent: String?
 )

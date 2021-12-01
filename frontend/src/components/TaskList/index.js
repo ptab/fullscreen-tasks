@@ -3,7 +3,6 @@ import {Card, CardHeader, CardBody, ListGroup, CardFooter} from "reactstrap"
 import AddTask from "../AddTask"
 import Todo from '../Todo'
 import CompletedTasks from "../CompletedTasks";
-import {add, remove} from "../../utils/arrays"
 import {get, post, patch, del} from "../../utils/client"
 import "./style.css"
 
@@ -32,30 +31,55 @@ export default class TaskList extends React.Component {
         )
     }
 
-    handleTaskAdded(title) {
-        this.setState({todo: add(this.state.todo, {key: title, title: title, subtasks: []})})
+    handleTaskAdded(task) {
+        const data = {key: task.id || task.title, title: task.title, subtasks: []}
+        if (task.parent) {
+            const [parent, todo] = removeTask(this.state.todo, task.parent)
+            parent.subtasks.unshift(data)
+            todo.push(parent)
+            todo.sort((a, b) => a.position > b.position)
+            this.setState({todo: todo})
+        } else {
+            const todo = addTask(this.state.todo, data)
+            this.setState({todo: todo})
+        }
 
         post(`/api/lists/${this.state.taskList.id}/tasks`,
-            {"title": title},
+            task,
             _ => this.fetchTasks(),
             _ => this.setState({todo: [], done: []})
         )
     }
 
-    handleTaskChecked(taskId, checked) {
+    handleTaskChecked(task, checked) {
         if (checked) {
-            const [task, todo] = remove(this.state.todo, taskId)
-            const done = add(this.state.done, task)
+            const [, todo] = removeTask(this.state.todo, task.id)
+            const done = addTask(this.state.done, task)
             this.setState({todo: todo, done: done})
 
+        } else if (task.parent) {
+            const [, done] = removeTask(this.state.done, task.id)
+            const [parent, todo] = removeTask(this.state.todo, task.parent)
+            if (parent) {
+                parent.subtasks.unshift(task)
+                parent.subtasks.sort((a, b) => a.position > b.position)
+                todo.push(parent)
+                todo.sort((a, b) => a.position > b.position)
+                this.setState({todo: todo, done: done})
+            } else {
+                todo.push(task)
+                todo.sort((a, b) => a.position > b.position)
+                this.setState({todo: todo, done: done})
+            }
+
         } else {
-            const [task, done] = remove(this.state.done, taskId)
-            const todo = add(this.state.todo, task)
+            const [, done] = removeTask(this.state.done, task.id)
+            const todo = addTask(this.state.todo, task)
             todo.sort((a, b) => a.position > b.position)
             this.setState({todo: todo, done: done})
         }
 
-        patch(`/api/lists/${this.state.taskList.id}/tasks/${taskId}`,
+        patch(`/api/lists/${this.state.taskList.id}/tasks/${task.id}`,
             {done: checked},
             _ => this.fetchTasks(),
             _ => this.setState({todo: [], done: []})
@@ -71,8 +95,13 @@ export default class TaskList extends React.Component {
     }
 
     handleTaskDeleted(task) {
-        const [, done] = remove(this.state.done, task.id)
-        this.setState({done: done})
+        if (task.done) {
+            const [, done] = removeTask(this.state.done, task.id)
+            this.setState({done: done})
+        } else {
+            const [, todo] = removeTask(this.state.todo, task.id)
+            this.setState({todo: todo})
+        }
 
         del(`/api/lists/${this.state.taskList.id}/tasks/${task.id}`,
             _ => this.fetchTasks(),
@@ -99,6 +128,7 @@ export default class TaskList extends React.Component {
                             todo.map(task =>
                                 <Todo key={task.id}
                                       task={task}
+                                      onTaskAdded={this.handleTaskAdded}
                                       onTaskChecked={this.handleTaskChecked}
                                       onTaskEdited={this.handleTaskEdited}
                                       onTaskDeleted={this.handleTaskDeleted}/>
@@ -115,4 +145,17 @@ export default class TaskList extends React.Component {
             </Card>
         )
     }
+}
+
+function addTask(arr, task) {
+    const copy = arr
+    copy.unshift(task)
+    return copy
+}
+
+function removeTask(arr, taskId) {
+    return [
+        arr.find(t => t.id === taskId),
+        arr.filter(t => t.id !== taskId)
+    ]
 }

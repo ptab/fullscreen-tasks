@@ -11,13 +11,13 @@ export default class Checkbox extends React.Component {
         this.handleClick = this.handleClick.bind(this)
     }
 
-    handleClick(event, taskId, onTaskChecked) {
+    handleClick(event, task, onTaskChecked) {
         this.setState({checked: !this.state.checked})
-        onTaskChecked(taskId, !this.state.checked)
+        onTaskChecked(task, !this.state.checked)
     }
 
     render() {
-        const {taskId, parentHovering, onTaskChecked} = this.props
+        const {task, parentHovering, onTaskChecked} = this.props
         const {checked, hovering} = this.state
 
         let checkbox = "cursor-hand"
@@ -36,6 +36,6 @@ export default class Checkbox extends React.Component {
         return <i className={checkbox}
                   onMouseEnter={_ => this.setState({hovering: true})}
                   onMouseLeave={_ => this.setState({hovering: false})}
-                  onClick={e => this.handleClick(e, taskId, onTaskChecked)}/>
+                  onClick={e => this.handleClick(e, task, onTaskChecked)}/>
     }
 }

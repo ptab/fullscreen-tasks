@@ -2,6 +2,7 @@ import React from "react"
 import {ListGroupItem, Form, InputGroup, Input, Collapse, InputGroupText, Button} from "reactstrap"
 import InputGroupIndicator from "../InputGroupIndicator"
 import InputGroupCheckbox from "../InputGroupCheckbox"
+import AddSubtask from "../AddSubtask";
 
 export default class Todo extends React.Component {
 
@@ -41,7 +42,7 @@ export default class Todo extends React.Component {
     }
 
     render() {
-        const {task, margin, onTaskChecked, onTaskEdited, onTaskDeleted} = this.props
+        const {task, margin, onTaskAdded, onTaskChecked, onTaskEdited, onTaskDeleted} = this.props
         const {title, details, dueBy, hovering, editing} = this.state
 
         let cursor
@@ -69,43 +70,26 @@ export default class Todo extends React.Component {
                                    onFocus={_ => this.setState({editing: true})}
                                    onChange={this.onChange}/>
                         </InputGroup>
-                        <Collapse isOpen={editing}>
-                            <Description value={details} editable onChange={this.onChange}/>
-                            <DueBy value={dueBy} editable onChange={this.onChange}/>
-                            <div className="mt-2">
-                                <Button outline
-                                        color="primary"
-                                        className="btn btn-sm ms-4 me-2"
-                                        onClick={e => this.handleSubmit(e, task, onTaskEdited)}>
-                                    <i className="bi bi-save py-0 me-2"/>
-                                    Save
-                                </Button>
-                                <Button outline
-                                        className="btn btn-sm me-2"
-                                        onClick={_ => this.resetForm(task)}>
-                                    <i className="bi bi-x-lg py-0 me-2"/>
-                                    Close
-                                </Button>
-                                <Button outline
-                                        color="danger"
-                                        className="btn btn-sm"
-                                        onClick={_ => onTaskDeleted(task)}>
-                                    <i className="bi bi-trash py-0 me-2"/>
-                                    Delete
-                                </Button>
-                            </div>
-                        </Collapse>
-                        <Collapse isOpen={!editing}>
-                            <Description value={details} onClick={_ => this.setState({editing: true})}/>
-                            <DueBy value={dueBy} onClick={_ => this.setState({editing: true})}/>
-                        </Collapse>
                     </Form>
+                    <Collapse isOpen={editing}>
+                        <Description value={details} editable onChange={this.onChange}/>
+                        <DueBy value={dueBy} editable onChange={this.onChange}/>
+                        <AddSubtask task={task} onTaskAdded={onTaskAdded}/>
+                        <Actions save={e => this.handleSubmit(e, task, onTaskEdited)}
+                                 close={_ => this.resetForm(task)}
+                                 remove={_ => onTaskDeleted(task)}/>
+                    </Collapse>
+                    <Collapse isOpen={!editing}>
+                        <Description value={details}/>
+                        <DueBy value={dueBy} />
+                    </Collapse>
 
                 </ListGroupItem>
                 {
                     task.subtasks.map(subtask =>
                         <Subtask key={subtask.id}
                                  task={subtask}
+                                 onTaskAdded={onTaskAdded}
                                  onTaskChecked={onTaskChecked}
                                  onTaskEdited={onTaskEdited}
                                  onTaskDeleted={onTaskDeleted}/>
@@ -117,16 +101,17 @@ export default class Todo extends React.Component {
 }
 
 function Subtask(props) {
-    const {task, onTaskChecked, onTaskEdited, onTaskDeleted} = props
+    const {task, onTaskAdded, onTaskChecked, onTaskEdited, onTaskDeleted} = props
     return <Todo margin="ms-5"
                  task={task}
+                 onTaskAdded={onTaskAdded}
                  onTaskChecked={onTaskChecked}
                  onTaskEdited={onTaskEdited}
                  onTaskDeleted={onTaskDeleted}/>
 }
 
 function Description(props) {
-    const {editable, value, onClick, onChange} = props
+    const {editable, value, onChange} = props
 
     if (!editable && !value)
         return null
@@ -138,7 +123,6 @@ function Description(props) {
         component = <Input type="textarea"
                            name="details"
                            placeholder="Add details"
-                           value={value}
                            className="border-0 bg-light shadow-none rounded-3"
                            style={{fontSize: 0.80 + "rem"}}
                            rows="1"
@@ -148,8 +132,7 @@ function Description(props) {
                            disabled
                            value={value}
                            className="border-0 bg-body py-0 text-muted"
-                           style={{fontSize: 0.80 + "rem"}}
-                           onClick={onClick}/>
+                           style={{fontSize: 0.80 + "rem"}}/>
     }
 
     return (
@@ -164,7 +147,7 @@ function Description(props) {
 }
 
 function DueBy(props) {
-    const {editable, value, onClick, onChange} = props
+    const {editable, value, onChange} = props
     if (!editable && !value)
         return null
 
@@ -193,8 +176,7 @@ function DueBy(props) {
                            disabled
                            value={dueBy.toLocaleString()}
                            className={`border-0 bg-body ${color}`}
-                           style={{fontSize: 0.80 + "rem"}}
-                           onClick={onClick}/>
+                           style={{fontSize: 0.80 + "rem"}}/>
 
     return (
         <InputGroup className={margin}>
@@ -204,5 +186,33 @@ function DueBy(props) {
             </InputGroupText>
             {component}
         </InputGroup>
+    )
+}
+
+function Actions(props) {
+    const {save, close, remove} = props
+    return (
+        <div className="mt-2">
+            <Button outline
+                    color="primary"
+                    className="btn btn-sm ms-4 me-2"
+                    onClick={save}>
+                <i className="bi bi-save py-0 me-2"/>
+                Save
+            </Button>
+            <Button outline
+                    className="btn btn-sm me-2"
+                    onClick={close}>
+                <i className="bi bi-x-lg py-0 me-2"/>
+                Close
+            </Button>
+            <Button outline
+                    color="danger"
+                    className="btn btn-sm"
+                    onClick={remove}>
+                <i className="bi bi-trash py-0 me-2"/>
+                Delete
+            </Button>
+        </div>
     )
 }

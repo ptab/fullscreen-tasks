@@ -1,7 +1,7 @@
 package me.taborda.fullscreentasks.adapters.googletasks
 
-import me.taborda.fullscreentasks.domain.EditTaskRequest
 import me.taborda.fullscreentasks.domain.Task
+import me.taborda.fullscreentasks.domain.TaskRequest
 import me.taborda.fullscreentasks.domain.Tasks
 import me.taborda.fullscreentasks.ports.GoogleTasksPort
 import org.slf4j.LoggerFactory
@@ -35,6 +35,7 @@ class TasksClient(client: GoogleClient) {
                 .list(taskList)
                 .setShowCompleted(true)
                 .setShowHidden(true)
+                .setMaxResults(100)
                 .execute()
                 .items
                 .orEmpty()
@@ -42,18 +43,19 @@ class TasksClient(client: GoogleClient) {
         val (todoTasks, doneTasks) = allTasks.partition { it.completed == null }
         return Tasks(
             todo = withSubtasks(todoTasks).sortedBy { it.position },
-            done = withSubtasks(doneTasks).sortedByDescending { it.doneAt }
+            done = doneTasks.map { it.toTask() }.sortedByDescending { it.doneAt }
         )
     }
 
-    fun add(taskList: String, request: EditTaskRequest): Task {
+    fun add(taskList: String, request: TaskRequest): Task {
         return service.tasks()
             .insert(taskList, request.toGTask())
+            .setParent(request.parent)
             .execute()
             .toTask()
     }
 
-    fun edit(taskList: String, task: String, request: EditTaskRequest): Task {
+    fun edit(taskList: String, task: String, request: TaskRequest): Task {
         return service.tasks()
             .patch(taskList, task, request.toGTask())
             .execute()
@@ -79,6 +81,7 @@ class TasksClient(client: GoogleClient) {
             details = notes,
             doneAt = completed.toInstant(),
             dueBy = due.toInstant(),
+            parent = parent,
             subtasks = subtasks
         )
     }
@@ -87,7 +90,7 @@ class TasksClient(client: GoogleClient) {
         return this?.let { DateTimeFormatter.ISO_OFFSET_DATE_TIME.parse(it, Instant::from) }
     }
 
-    private fun EditTaskRequest.toGTask(): GTask {
+    private fun TaskRequest.toGTask(): GTask {
         return GTask()
             .setTitle(title)
             .setStatus(done?.let { if (it) "completed" else "needsAction" })

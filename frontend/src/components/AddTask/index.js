@@ -20,7 +20,7 @@ export default class AddTask extends React.Component {
         const title = this.state.title
         this.setState({title: "", editing: false})
         if (title !== "") {
-            handleTaskAdded(title)
+            handleTaskAdded({title: title})
         }
     }
 
@@ -59,7 +59,7 @@ export default class AddTask extends React.Component {
                            className={`${cursor} border-0 shadow-none ${textcolor}`}
                            placeholder="Add a task"
                            value={title}
-                           onFocus={_ => this.setState({placeholder: "", editing: true})}
+                           onFocus={_ => this.setState({editing: true})}
                            onChange={e => this.setState({title: e.target.value})}/>
                 </InputGroup>
             </Form>

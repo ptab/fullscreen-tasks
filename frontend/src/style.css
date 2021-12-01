@@ -1,7 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Mulish&family=Open+Sans+Condensed&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Assistant&family=Puritan&display=swap');
 html, body {
-    font-family: 'Open Sans Condensed', sans-serif;
+    font-family: 'Assistant', sans-serif;
     background-color: whitesmoke;
     height: 100%;
 }

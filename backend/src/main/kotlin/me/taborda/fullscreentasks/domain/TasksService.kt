@@ -17,12 +17,12 @@ class TasksService(private val googleTasks: GoogleTasksPort) : TasksPort {
         return googleTasks.getTasks(taskList)
     }
 
-    override fun add(taskList: String, request: EditTaskRequest): Task {
+    override fun add(taskList: String, request: TaskRequest): Task {
         logger.info("Adding task to list $taskList: $request")
         return googleTasks.addTask(taskList, request)
     }
 
-    override fun edit(taskList: String, id: String, request: EditTaskRequest): Task {
+    override fun edit(taskList: String, id: String, request: TaskRequest): Task {
         logger.info("Editing task $id on list $taskList: $request")
         return googleTasks.editTask(taskList, id, request)
     }

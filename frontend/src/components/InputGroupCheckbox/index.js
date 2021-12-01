@@ -6,7 +6,7 @@ export default function InputGroupCheckbox(props) {
     const {task, checked, hovering, onTaskChecked} = props
     return (
         <InputGroupText className="border-0 bg-body py-0">
-            <Checkbox taskId={task.id}
+            <Checkbox task={task}
                       checked={checked}
                       parentHovering={hovering}
                       onTaskChecked={onTaskChecked}/>
