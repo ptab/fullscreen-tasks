@@ -2,7 +2,9 @@ import React from "react"
 import {ListGroupItem, Form, InputGroup, Input, Collapse, InputGroupText, Button} from "reactstrap"
 import InputGroupIndicator from "../InputGroupIndicator"
 import InputGroupCheckbox from "../InputGroupCheckbox"
-import AddSubtask from "../AddSubtask";
+import InputGroupDeleteTask from "../InputGroupDeleteTask"
+import AddSubtask from "../AddSubtask"
+import "./style.css"
 
 export default class Todo extends React.Component {
 
@@ -42,7 +44,7 @@ export default class Todo extends React.Component {
     }
 
     render() {
-        const {task, margin, onTaskAdded, onTaskChecked, onTaskEdited, onTaskDeleted} = this.props
+        const {task, onTaskAdded, onTaskChecked, onTaskEdited, onTaskDeleted} = this.props
         const {title, details, dueBy, hovering, editing} = this.state
 
         let cursor
@@ -53,6 +55,13 @@ export default class Todo extends React.Component {
         } else if (hovering) {
             cursor = "cursor-hand"
         }
+
+        let margin
+        let addSubtaskInput
+        if (task.parent)
+            margin = "ms-5"
+        else
+            addSubtaskInput = <AddSubtask task={task} onTaskAdded={onTaskAdded}/>
 
         return (
             <div>
@@ -69,30 +78,31 @@ export default class Todo extends React.Component {
                                    value={title}
                                    onFocus={_ => this.setState({editing: true})}
                                    onChange={this.onChange}/>
+                            <InputGroupDeleteTask visible={hovering && !editing} task={task} onTaskDeleted={onTaskDeleted}/>
                         </InputGroup>
                     </Form>
                     <Collapse isOpen={editing}>
                         <Description value={details} editable onChange={this.onChange}/>
                         <DueBy value={dueBy} editable onChange={this.onChange}/>
-                        <AddSubtask task={task} onTaskAdded={onTaskAdded}/>
+                        {addSubtaskInput}
                         <Actions save={e => this.handleSubmit(e, task, onTaskEdited)}
                                  close={_ => this.resetForm(task)}
                                  remove={_ => onTaskDeleted(task)}/>
                     </Collapse>
                     <Collapse isOpen={!editing}>
                         <Description value={details}/>
-                        <DueBy value={dueBy} />
+                        <DueBy value={dueBy}/>
                     </Collapse>
 
                 </ListGroupItem>
                 {
                     task.subtasks.map(subtask =>
-                        <Subtask key={subtask.id}
-                                 task={subtask}
-                                 onTaskAdded={onTaskAdded}
-                                 onTaskChecked={onTaskChecked}
-                                 onTaskEdited={onTaskEdited}
-                                 onTaskDeleted={onTaskDeleted}/>
+                        <Todo key={subtask.id}
+                              task={subtask}
+                              onTaskAdded={onTaskAdded}
+                              onTaskChecked={onTaskChecked}
+                              onTaskEdited={onTaskEdited}
+                              onTaskDeleted={onTaskDeleted}/>
                     )
                 }
             </div>
@@ -100,15 +110,6 @@ export default class Todo extends React.Component {
     }
 }
 
-function Subtask(props) {
-    const {task, onTaskAdded, onTaskChecked, onTaskEdited, onTaskDeleted} = props
-    return <Todo margin="ms-5"
-                 task={task}
-                 onTaskAdded={onTaskAdded}
-                 onTaskChecked={onTaskChecked}
-                 onTaskEdited={onTaskEdited}
-                 onTaskDeleted={onTaskDeleted}/>
-}
 
 function Description(props) {
     const {editable, value, onChange} = props
@@ -123,16 +124,16 @@ function Description(props) {
         component = <Input type="textarea"
                            name="details"
                            placeholder="Add details"
+                           value={value}
                            className="border-0 bg-light shadow-none rounded-3"
                            style={{fontSize: 0.80 + "rem"}}
-                           rows="1"
                            onChange={onChange}/>
     } else if (value) {
-        component = <Input type="text"
-                           disabled
-                           value={value}
-                           className="border-0 bg-body py-0 text-muted"
-                           style={{fontSize: 0.80 + "rem"}}/>
+        component = (
+            <InputGroupText className="form-control border-0 bg-body text-start text-muted">
+                <span className="task-details">{value}</span>
+            </InputGroupText>
+        )
     }
 
     return (
@@ -148,13 +149,13 @@ function Description(props) {
 
 function DueBy(props) {
     const {editable, value, onChange} = props
+
     if (!editable && !value)
         return null
 
     const dueBy = new Date(value)
 
     let color
-
     if (!editable && dueBy <= Date.now())
         color = "text-warning"
     else
@@ -171,12 +172,13 @@ function DueBy(props) {
                            className="border-0 bg-light shadow-none rounded-3"
                            style={{fontSize: 0.80 + "rem"}}
                            onChange={onChange}/>
-    } else
-        component = <Input type="text"
-                           disabled
-                           value={dueBy.toLocaleString()}
-                           className={`border-0 bg-body ${color}`}
-                           style={{fontSize: 0.80 + "rem"}}/>
+    } else {
+        component = (
+            <InputGroupText className={`form-control border-0 bg-body text-start ${color}`}>
+                <span className="task-details">{dueBy.toLocaleString()}</span>
+            </InputGroupText>
+        )
+    }
 
     return (
         <InputGroup className={margin}>
