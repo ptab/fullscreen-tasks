@@ -1,6 +1,6 @@
 import React from "react"
 import {ListGroup, Collapse} from "reactstrap"
-import Done from "../Done"
+import Done from "./Done"
 
 export default class CompletedTasks extends React.Component {
 
@@ -30,7 +30,7 @@ export default class CompletedTasks extends React.Component {
 
         return (
             <div className="text-muted cursor-hand">
-                 <span className="list-title" onClick={_ => this.setState({open: !open})}>
+                 <span className="title" onClick={_ => this.setState({open: !open})}>
                      {chevron}
                      Completed ({done.length})
                  </span>

@@ -6,10 +6,23 @@ html, body {
     height: 100%;
 }
 
+.title {
+    font-family: 'Puritan', sans-serif ;
+}
+
 .cursor-hand {
     cursor: pointer;
 }
 
 .cursor-text {
     cursor: text;
+}
+
+.task-input {
+    font-size: 0.80rem;
+}
+
+.task-details {
+    font-size: 0.80rem;
+    white-space: pre-wrap;
 }

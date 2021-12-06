@@ -1,8 +1,8 @@
 import React from "react"
 import {InputGroup, InputGroupText, ListGroupItem} from "reactstrap"
-import InputGroupCheckbox from "../InputGroupCheckbox";
-import InputGroupIndicator from "../InputGroupIndicator";
-import InputGroupDeleteTask from "../InputGroupDeleteTask"
+import InputGroupCheckbox from "./InputGroupCheckbox";
+import InputGroupIndicator from "./InputGroupIndicator";
+import InputGroupDeleteTask from "./InputGroupDeleteTask"
 
 export default class Done extends React.Component {
 
@@ -16,7 +16,6 @@ export default class Done extends React.Component {
     render() {
         const {task, onTaskChecked, onTaskDeleted} = this.props
         const {hovering} = this.state
-
         return (
             <ListGroupItem className="border-0 p-0">
                 <InputGroup onMouseEnter={_ => this.setState({hovering: true})}

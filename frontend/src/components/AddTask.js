@@ -1,6 +1,6 @@
 import React from "react"
 import {Input, Form, InputGroup, InputGroupText} from "reactstrap"
-import InputGroupIndicator from "../InputGroupIndicator";
+import InputGroupIndicator from "./InputGroupIndicator";
 
 export default class AddTask extends React.Component {
 

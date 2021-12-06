@@ -8,16 +8,15 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.time.Instant
 import java.time.format.DateTimeFormatter
+import com.google.api.services.tasks.Tasks as GoogleTasks
 import com.google.api.services.tasks.model.Task as GTask
 
 @Component
-class TasksClient(client: GoogleClient) {
+class TasksClient(private val client: GoogleTasks) {
 
     companion object {
         private val logger = LoggerFactory.getLogger(GoogleTasksPort::class.java)
     }
-
-    private val service = client.init()
 
     fun get(taskList: String): Tasks {
         fun withSubtasks(tasks: List<GTask>): List<Task> {
@@ -31,7 +30,8 @@ class TasksClient(client: GoogleClient) {
         }
 
         val allTasks =
-            service.tasks()
+            client
+                .tasks()
                 .list(taskList)
                 .setShowCompleted(true)
                 .setShowHidden(true)
@@ -48,7 +48,8 @@ class TasksClient(client: GoogleClient) {
     }
 
     fun add(taskList: String, request: TaskRequest): Task {
-        return service.tasks()
+        return client
+            .tasks()
             .insert(taskList, request.toGTask())
             .setParent(request.parent)
             .execute()
@@ -56,14 +57,16 @@ class TasksClient(client: GoogleClient) {
     }
 
     fun edit(taskList: String, task: String, request: TaskRequest): Task {
-        return service.tasks()
+        return client
+            .tasks()
             .patch(taskList, task, request.toGTask())
             .execute()
             .toTask()
     }
 
     fun delete(taskList: String, task: String) {
-        service.tasks()
+        client
+            .tasks()
             .delete(taskList, task)
             .execute()
     }

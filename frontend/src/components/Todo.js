@@ -1,10 +1,9 @@
 import React from "react"
 import {ListGroupItem, Form, InputGroup, Input, Collapse, InputGroupText, Button} from "reactstrap"
-import InputGroupIndicator from "../InputGroupIndicator"
-import InputGroupCheckbox from "../InputGroupCheckbox"
-import InputGroupDeleteTask from "../InputGroupDeleteTask"
-import AddSubtask from "../AddSubtask"
-import "./style.css"
+import InputGroupIndicator from "./InputGroupIndicator"
+import InputGroupCheckbox from "./InputGroupCheckbox"
+import InputGroupDeleteTask from "./InputGroupDeleteTask"
+import AddSubtask from "./AddSubtask"
 
 export default class Todo extends React.Component {
 
@@ -124,9 +123,8 @@ function Description(props) {
         component = <Input type="textarea"
                            name="details"
                            placeholder="Add details"
-                           value={value}
-                           className="border-0 bg-light shadow-none rounded-3"
-                           style={{fontSize: 0.80 + "rem"}}
+                           defaultValue={value}
+                           className="border-0 bg-light shadow-none rounded-3 task-input"
                            onChange={onChange}/>
     } else if (value) {
         component = (
@@ -169,8 +167,7 @@ function DueBy(props) {
                            name="dueBy"
                            placeholder="Add due date"
                            value={dueBy}
-                           className="border-0 bg-light shadow-none rounded-3"
-                           style={{fontSize: 0.80 + "rem"}}
+                           className="border-0 bg-light shadow-none rounded-3 task-input"
                            onChange={onChange}/>
     } else {
         component = (

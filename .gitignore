@@ -4,5 +4,6 @@ build/
 tokens/
 node/
 node_modules/
-credentials.json
+# temporary exception to ensure I don't push private tokens to git
+application.yml
 npm-debug.log

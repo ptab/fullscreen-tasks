@@ -1,23 +1,22 @@
 package me.taborda.fullscreentasks.adapters.googletasks
 
-import me.taborda.fullscreentasks.domain.TaskList
 import me.taborda.fullscreentasks.domain.EditTaskListRequest
+import me.taborda.fullscreentasks.domain.TaskList
 import me.taborda.fullscreentasks.ports.GoogleTasksPort
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
+import com.google.api.services.tasks.Tasks as GoogleTasks
 import com.google.api.services.tasks.model.TaskList as GTaskList
 
 @Component
-class TaskListsClient(client: GoogleClient) {
+class TaskListsClient(private val client: GoogleTasks) {
 
     companion object {
         private val logger = LoggerFactory.getLogger(GoogleTasksPort::class.java)
     }
 
-    private val service = client.init()
-
     fun get(): List<TaskList> {
-        return service
+        return client
             .tasklists()
             .list()
             .execute()
@@ -33,7 +32,7 @@ class TaskListsClient(client: GoogleClient) {
     }
 
     fun add(request: EditTaskListRequest): TaskList {
-        return service
+        return client
             .tasklists()
             .insert(request.toGTaskList())
             .execute()
@@ -41,7 +40,7 @@ class TaskListsClient(client: GoogleClient) {
     }
 
     fun edit(taskList: String, request: EditTaskListRequest): TaskList {
-        return service
+        return client
             .tasklists()
             .update(taskList, request.toGTaskList())
             .execute()
@@ -49,7 +48,7 @@ class TaskListsClient(client: GoogleClient) {
     }
 
     fun delete(taskList: String) {
-        service
+        client
             .tasklists()
             .delete(taskList)
             .execute()

@@ -1,6 +1,6 @@
 import React from "react"
 import {Input, Form, InputGroup, InputGroupText} from "reactstrap"
-import InputGroupIndicator from "../InputGroupIndicator";
+import InputGroupIndicator from "./InputGroupIndicator";
 
 export default class AddSubtask extends React.Component {
 
@@ -37,8 +37,7 @@ export default class AddSubtask extends React.Component {
                     <Input type="text"
                            placeholder="Add a subtask"
                            value={title}
-                           className={`border-0 bg-light shadow-none rounded-3`}
-                           style={{fontSize: 0.80 + "rem"}}
+                           className="border-0 bg-light shadow-none rounded-3 task-input"
                            onChange={e => this.setState({title: e.target.value})}
                            onSubmit={e => this.handleSubmit(e, task, onTaskAdded)}/>
                 </InputGroup>

@@ -12,8 +12,8 @@ group = "me.taborda"
 version = "0.0.1-SNAPSHOT"
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_16
-    targetCompatibility = JavaVersion.VERSION_16
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 repositories {
@@ -23,12 +23,12 @@ repositories {
 dependencies {
     implementation("org.jetbrains.kotlin", "kotlin-reflect")
     implementation("org.jetbrains.kotlin", "kotlin-stdlib-jdk8")
+
     implementation("org.springframework.boot", "spring-boot-starter-web")
+    implementation("org.springframework.boot", "spring-boot-starter-security")
+    implementation("org.springframework.boot", "spring-boot-starter-oauth2-client")
 
     implementation("com.google.apis", "google-api-services-tasks", "v1-rev20210709-1.32.1")
-    implementation("com.google.api-client", "google-api-client", "1.32.2")
-    implementation("com.google.http-client", "google-http-client-jackson2", "1.40.1")
-    implementation("com.google.oauth-client", "google-oauth-client-jetty", "1.32.1")
 
     testImplementation("org.springframework.boot", "spring-boot-starter-test")
 }

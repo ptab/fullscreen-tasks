@@ -1,16 +1,16 @@
 import React from "react"
-import {Card, CardHeader, CardBody, ListGroup, CardFooter} from "reactstrap"
-import AddTask from "../AddTask"
-import Todo from '../Todo'
-import CompletedTasks from "../CompletedTasks";
-import {get, post, patch, del} from "../../utils/client"
-import "./style.css"
+import {Card, CardHeader, CardBody, ListGroup, CardFooter, Spinner} from "reactstrap"
+import AddTask from "./AddTask"
+import Todo from './Todo'
+import CompletedTasks from "./CompletedTasks";
+import {get, post, patch, del} from "../utils/client"
 
 export default class TaskList extends React.Component {
 
     constructor(props) {
         super(props)
         this.state = {
+            loading: true,
             taskList: props.taskList,
             todo: [],
             done: []
@@ -26,8 +26,8 @@ export default class TaskList extends React.Component {
     fetchTasks() {
         get(
             `/api/lists/${this.state.taskList.id}/tasks`,
-            result => this.setState({todo: result.todo, done: result.done}),
-            _ => this.setState({todo: [], done: []})
+            result => this.setState({todo: result.todo, done: result.done, loading: false}),
+            _ => this.setState({todo: [], done: [], loading: false})
         )
     }
 
@@ -47,7 +47,7 @@ export default class TaskList extends React.Component {
         post(`/api/lists/${this.state.taskList.id}/tasks`,
             task,
             _ => this.fetchTasks(),
-            _ => this.setState({todo: [], done: []})
+            _ => this.setState({todo: [], done: [], loading: false})
         )
     }
 
@@ -82,7 +82,7 @@ export default class TaskList extends React.Component {
         patch(`/api/lists/${this.state.taskList.id}/tasks/${task.id}`,
             {done: checked},
             _ => this.fetchTasks(),
-            _ => this.setState({todo: [], done: []})
+            _ => this.setState({todo: [], done: [], loading: false})
         )
     }
 
@@ -90,7 +90,7 @@ export default class TaskList extends React.Component {
         patch(`/api/lists/${this.state.taskList.id}/tasks/${taskId}`,
             data,
             _ => this.fetchTasks(),
-            _ => this.setState({todo: [], done: []})
+            _ => this.setState({todo: [], done: [], loading: false})
         )
     }
 
@@ -105,7 +105,7 @@ export default class TaskList extends React.Component {
 
         del(`/api/lists/${this.state.taskList.id}/tasks/${task.id}`,
             _ => this.fetchTasks(),
-            _ => this.setState({todo: [], done: []})
+            _ => this.setState({todo: [], done: [], loading: false})
         )
     }
 
@@ -114,13 +114,17 @@ export default class TaskList extends React.Component {
     }
 
     render() {
-        const {taskList, todo, done} = this.state
-        return (
-            <Card className="m-3 p-3 shadow">
-                <CardHeader className="border-0 bg-body list-title">
-                    <i className="bi bi-list-check muted me-3"/>
-                    <span className="fs-5">{taskList.title}</span>
-                </CardHeader>
+        const {loading, taskList, todo, done} = this.state
+
+        let body, footer
+        if (loading)
+            body = (
+                <div className="d-flex justify-content-center align-items-center my-5">
+                    <Spinner className="text-primary"/>
+                </div>
+            )
+        else {
+            body = (
                 <CardBody>
                     <AddTask taskList={taskList.id} onTaskAdded={this.handleTaskAdded}/>
                     <ListGroup>
@@ -136,12 +140,25 @@ export default class TaskList extends React.Component {
                         }
                     </ListGroup>
                 </CardBody>
+            )
+            footer = (
                 <CardFooter className="border-0 bg-body">
                     <CompletedTasks taskList={taskList}
                                     done={done}
                                     onTaskChecked={this.handleTaskChecked}
                                     onTaskDeleted={this.handleTaskDeleted}/>
                 </CardFooter>
+            )
+        }
+
+        return (
+            <Card className="m-3 p-3 shadow">
+                <CardHeader className="border-0 bg-body title">
+                    <i className="bi bi-card-checklist muted me-3"/>
+                    <span className="fs-5">{taskList.title}</span>
+                </CardHeader>
+                {body}
+                {footer}
             </Card>
         )
     }

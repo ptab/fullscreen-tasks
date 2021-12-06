@@ -1,6 +1,6 @@
 import React from "react"
 import {InputGroupText} from "reactstrap"
-import Checkbox from "../Checkbox"
+import Checkbox from "./Checkbox"
 
 export default function InputGroupCheckbox(props) {
     const {task, checked, hovering, onTaskChecked} = props

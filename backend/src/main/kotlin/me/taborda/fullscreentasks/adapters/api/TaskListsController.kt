@@ -1,7 +1,7 @@
 package me.taborda.fullscreentasks.adapters.api
 
-import me.taborda.fullscreentasks.domain.TaskList
 import me.taborda.fullscreentasks.domain.EditTaskListRequest
+import me.taborda.fullscreentasks.domain.TaskList
 import me.taborda.fullscreentasks.ports.TaskListsPort
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
