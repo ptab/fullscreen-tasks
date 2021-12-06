@@ -1,5 +1,5 @@
 import React from "react"
-import {ListGroup, Collapse} from "reactstrap"
+import {ListGroup, Collapse, UncontrolledCollapse} from "reactstrap"
 import Done from "./Done"
 
 export default class CompletedTasks extends React.Component {
@@ -29,8 +29,8 @@ export default class CompletedTasks extends React.Component {
             chevron = <i className="bi bi-chevron-compact-down me-3"/>
 
         return (
-            <div className="text-muted cursor-hand">
-                 <span className="title" onClick={_ => this.setState({open: !open})}>
+            <div className="text-muted">
+                 <span className="title cursor-hand" onClick={_ => this.setState({open: !open})}>
                      {chevron}
                      Completed ({done.length})
                  </span>

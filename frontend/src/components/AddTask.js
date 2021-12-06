@@ -1,6 +1,6 @@
 import React from "react"
 import {Input, Form, InputGroup, InputGroupText} from "reactstrap"
-import InputGroupIndicator from "./InputGroupIndicator";
+import InputGroupSpacing from "./InputGroupSpacing";
 
 export default class AddTask extends React.Component {
 
@@ -48,7 +48,7 @@ export default class AddTask extends React.Component {
                   onSubmit={e => this.handleSubmit(e, onTaskAdded)}
                   onBlur={e => this.handleSubmit(e, onTaskAdded)}>
                 <InputGroup>
-                    <InputGroupIndicator/>
+                    <InputGroupSpacing/>
                     <InputGroupText className="border-0 bg-body py-0">
                         <i className={`cursor-hand ${button} text-primary`}
                            onMouseEnter={_ => this.setState({hovering: true})}

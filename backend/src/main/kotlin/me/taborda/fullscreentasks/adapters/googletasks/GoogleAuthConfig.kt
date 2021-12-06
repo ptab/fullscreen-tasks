@@ -3,6 +3,7 @@ package me.taborda.fullscreentasks.adapters.googletasks
 import com.google.api.client.auth.oauth2.BearerToken
 import com.google.api.client.auth.oauth2.Credential
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
+import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.gson.GsonFactory
 import com.google.api.services.tasks.Tasks
 import org.springframework.context.annotation.Bean
@@ -19,11 +20,18 @@ import org.springframework.web.context.WebApplicationContext
 class GoogleAuthConfig {
 
     @Bean
-    @Scope(WebApplicationContext.SCOPE_SESSION, proxyMode = ScopedProxyMode.TARGET_CLASS)
-    fun client(clientService: OAuth2AuthorizedClientService): Tasks {
-        val httpTransport = GoogleNetHttpTransport.newTrustedTransport()
-        val jsonFactory = GsonFactory.getDefaultInstance()
+    fun httpTransport(): NetHttpTransport {
+        return GoogleNetHttpTransport.newTrustedTransport()
+    }
 
+    @Bean
+    fun jsonFactory(): GsonFactory {
+        return GsonFactory.getDefaultInstance()
+    }
+
+    @Bean
+    @Scope(WebApplicationContext.SCOPE_SESSION, proxyMode = ScopedProxyMode.TARGET_CLASS)
+    fun client(httpTransport: NetHttpTransport, jsonFactory: GsonFactory, clientService: OAuth2AuthorizedClientService): Tasks {
         val authentication = SecurityContextHolder.getContext().authentication as OAuth2AuthenticationToken
         val client: OAuth2AuthorizedClient = clientService.loadAuthorizedClient(authentication.authorizedClientRegistrationId, authentication.name)
 

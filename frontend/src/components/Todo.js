@@ -4,6 +4,7 @@ import InputGroupIndicator from "./InputGroupIndicator"
 import InputGroupCheckbox from "./InputGroupCheckbox"
 import InputGroupDeleteTask from "./InputGroupDeleteTask"
 import AddSubtask from "./AddSubtask"
+import InputGroupSpacing from "./InputGroupSpacing";
 
 export default class Todo extends React.Component {
 
@@ -69,7 +70,9 @@ export default class Todo extends React.Component {
                                onMouseLeave={_ => this.setState({hovering: false})}>
                     <Form onSubmit={e => this.handleSubmit(e, task, onTaskEdited)}>
                         <InputGroup>
-                            <InputGroupIndicator visible={hovering || editing}/>
+                            <InputGroupIndicator visible={hovering || editing}
+                                                 isOpen={editing}
+                                                 onClick={_ => this.setState({editing: !this.state.editing})}/>
                             <InputGroupCheckbox task={task} hovering={hovering} onTaskChecked={onTaskChecked}/>
                             <Input type="text"
                                    name="title"
@@ -128,15 +131,15 @@ function Description(props) {
                            onChange={onChange}/>
     } else if (value) {
         component = (
-            <InputGroupText className="form-control border-0 bg-body text-start text-muted">
-                <span className="task-details">{value}</span>
+            <InputGroupText className="form-control border-0 bg-body py-0 text-start text-muted task-details">
+                {value}
             </InputGroupText>
         )
     }
 
     return (
         <InputGroup className={margin}>
-            <InputGroupIndicator/>
+            <InputGroupSpacing/>
             <InputGroupText className="border-0 bg-body py-0">
                 <i className="bi bi-card-text text-muted"/>
             </InputGroupText>
@@ -171,15 +174,15 @@ function DueBy(props) {
                            onChange={onChange}/>
     } else {
         component = (
-            <InputGroupText className={`form-control border-0 bg-body text-start ${color}`}>
-                <span className="task-details">{dueBy.toLocaleString()}</span>
+            <InputGroupText className={`form-control border-0 bg-body py-0 text-start ${color} task-details`}>
+                {dueBy.toLocaleString()}
             </InputGroupText>
         )
     }
 
     return (
         <InputGroup className={margin}>
-            <InputGroupIndicator/>
+            <InputGroupSpacing/>
             <InputGroupText className="border-0 bg-body py-0">
                 <i className={`bi bi-calendar-event py-0 ${color}`}/>
             </InputGroupText>

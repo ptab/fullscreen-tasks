@@ -153,9 +153,9 @@ export default class TaskList extends React.Component {
 
         return (
             <Card className="m-3 p-3 shadow">
-                <CardHeader className="border-0 bg-body title">
+                <CardHeader className="border-0 bg-body title fs-5">
                     <i className="bi bi-card-checklist muted me-3"/>
-                    <span className="fs-5">{taskList.title}</span>
+                    {taskList.title}
                 </CardHeader>
                 {body}
                 {footer}

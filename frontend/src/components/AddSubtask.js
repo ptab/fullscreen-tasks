@@ -1,6 +1,6 @@
 import React from "react"
 import {Input, Form, InputGroup, InputGroupText} from "reactstrap"
-import InputGroupIndicator from "./InputGroupIndicator";
+import InputGroupSpacing from "./InputGroupSpacing";
 
 export default class AddSubtask extends React.Component {
 
@@ -30,7 +30,7 @@ export default class AddSubtask extends React.Component {
                   onSubmit={e => this.handleSubmit(e, task, onTaskAdded)}
                   onBlur={e => this.handleSubmit(e, task, onTaskAdded)}>
                 <InputGroup className="mt-1">
-                    <InputGroupIndicator/>
+                    <InputGroupSpacing/>
                     <InputGroupText className="border-0 bg-body py-0">
                         <i className="bi bi-arrow-return-right text-muted"/>
                     </InputGroupText>
