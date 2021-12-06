@@ -17,9 +17,8 @@ export default class AddSubtask extends React.Component {
         event.preventDefault()
         const title = this.state.title
         this.setState({title: ""})
-        if (title !== "") {
+        if (title !== "")
             handleTaskAdded({title: title, parent: task.id})
-        }
     }
 
     render() {

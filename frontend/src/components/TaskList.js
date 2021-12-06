@@ -32,7 +32,7 @@ export default class TaskList extends React.Component {
     }
 
     handleTaskAdded(task) {
-        const data = {key: task.id || task.title, title: task.title, subtasks: []}
+        const data = {key: task.id || task.title, title: task.title, parent: task.parent, subtasks: []}
         if (task.parent) {
             const [parent, todo] = removeTask(this.state.todo, task.parent)
             parent.subtasks.unshift(data)
@@ -130,12 +130,25 @@ export default class TaskList extends React.Component {
                     <ListGroup>
                         {
                             todo.map(task =>
-                                <Todo key={task.id}
-                                      task={task}
-                                      onTaskAdded={this.handleTaskAdded}
-                                      onTaskChecked={this.handleTaskChecked}
-                                      onTaskEdited={this.handleTaskEdited}
-                                      onTaskDeleted={this.handleTaskDeleted}/>
+                                <div>
+                                    <Todo key={task.id}
+                                          task={task}
+                                          onTaskAdded={this.handleTaskAdded}
+                                          onTaskChecked={this.handleTaskChecked}
+                                          onTaskEdited={this.handleTaskEdited}
+                                          onTaskDeleted={this.handleTaskDeleted}/>
+
+                                    {
+                                        task.subtasks.map(subtask =>
+                                            <Todo key={subtask.id}
+                                                  task={subtask}
+                                                  onTaskAdded={this.handleTaskAdded}
+                                                  onTaskChecked={this.handleTaskChecked}
+                                                  onTaskEdited={this.handleTaskEdited}
+                                                  onTaskDeleted={this.handleTaskDeleted}/>
+                                        )
+                                    }
+                                </div>
                             )
                         }
                     </ListGroup>
